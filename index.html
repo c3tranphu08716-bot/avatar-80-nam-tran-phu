@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0739a6">
+  <title>Tạo Avatar 80 năm THPT Trần Phú</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .frame-picker{border:0;padding:0;margin:0 0 20px}.frame-picker legend{font-weight:700;font-size:.94rem;margin:0 0 9px}.frame-options{display:grid;grid-template-columns:1fr 1fr;gap:9px}.frame-option{position:relative;display:grid;grid-template-columns:54px 1fr;gap:8px;align-items:center;padding:5px;border:2px solid #dbe4f4;border-radius:10px;background:#fff;cursor:pointer;font-size:.82rem;font-weight:800}.frame-option input{position:absolute;opacity:0}.frame-option img{width:54px;height:54px;object-fit:cover;border-radius:7px}.frame-option.selected{border-color:#083bb1;box-shadow:0 0 0 2px #dce7ff}@media(max-width:360px){.frame-options{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <header>
+      <p class="eyebrow">KỶ NIỆM 80 NĂM • 1947–2027</p>
+      <h1>Tạo Avatar <span>THPT Trần Phú</span></h1>
+      <p class="subtitle">Chọn ảnh, căn chỉnh và tải về avatar mang dấu ấn 80 năm.</p>
+    </header>
+
+    <section class="studio" aria-label="Công cụ tạo avatar">
+      <div class="canvas-wrap">
+        <canvas id="avatarCanvas" width="1600" height="1600" aria-label="Xem trước avatar"></canvas>
+        <p id="emptyHint" class="empty-hint">Chọn ảnh của bạn để bắt đầu</p>
+      </div>
+      <div class="controls">
+        <fieldset class="frame-picker">
+          <legend>Chọn khung kỷ niệm</legend>
+          <div class="frame-options">
+            <label class="frame-option selected"><input type="radio" name="frame" value="frame-80-original.jpg" checked><img src="frame-80-original.jpg" alt="Khung 1"><span>Khung 1</span></label>
+            <label class="frame-option"><input type="radio" name="frame" value="frame-80-alternative.jpg"><img src="frame-80-alternative.jpg" alt="Khung 2"><span>Khung 2</span></label>
+          </div>
+        </fieldset>
+        <label class="upload-btn" for="photoInput">Chọn ảnh từ thiết bị</label>
+        <input id="photoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        <p class="tip">Ảnh JPG, PNG hoặc WebP. Ảnh được xử lý ngay trên thiết bị của bạn.</p>
+
+        <div class="control-group">
+          <label for="zoom">Phóng to / thu nhỏ</label>
+          <input id="zoom" type="range" min="0.5" max="3" step="0.01" value="1" disabled>
+        </div>
+        <div class="control-group">
+          <label for="rotate">Xoay ảnh</label>
+          <input id="rotate" type="range" min="-180" max="180" step="1" value="0" disabled>
+        </div>
+        <p class="drag-note">Kéo trực tiếp trên ảnh để thay đổi vị trí.</p>
+        <div class="button-row">
+          <button id="resetBtn" class="secondary" type="button" disabled>Đặt lại</button>
+          <button id="downloadBtn" class="primary" type="button" disabled>Tải avatar PNG</button>
+        </div>
+      </div>
+    </section>
+    <footer>Trường THPT Trần Phú • Phú Thọ</footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
