@@ -9,6 +9,10 @@ const hint = document.getElementById('emptyHint');
 const frame = new Image(); frame.src = 'frame-80-original.jpg';
 let frameOverlay = null;
 let photo = null, scale = 1, angle = 0, offsetX = 0, offsetY = 0, drag = null;
+const frameSpecs = {
+  'frame-80-original.jpg': {cx:627, cy:627, radius:478},
+  'frame-80-alternative.jpg': {cx:750, cy:750, radius:598}
+};
 
 function baseScale(){return Math.max(canvas.width / photo.naturalWidth, canvas.height / photo.naturalHeight)}
 function draw(){
@@ -23,23 +27,26 @@ function draw(){
 function enable(on){[zoom,rotate,reset,download].forEach(x=>x.disabled=!on)}
 function resetPhoto(){scale=1;angle=0;offsetX=0;offsetY=0;zoom.value=1;rotate.value=0;draw()}
 function processFrame(){
-  // Khung gốc là JPG: chỉ phần lõi trắng được làm trong suốt khi compositing,
-  // còn nguyên vẹn mọi chi tiết, màu sắc và đường viền của khung.
+  // Xuất đúng độ phân giải gốc của từng khung: A1 là 1254px, A2 là 1500px.
+  // Mọi pixel ngoài vùng chân dung được giữ nguyên từ tệp gốc.
+  canvas.width=frame.naturalWidth; canvas.height=frame.naturalHeight;
+  const spec=frameSpecs[frame.getAttribute('data-file') || frame.src.split('/').pop()] || {cx:canvas.width/2,cy:canvas.height/2,radius:canvas.width*.38};
   const off=document.createElement('canvas'); off.width=canvas.width; off.height=canvas.height;
   const octx=off.getContext('2d'); octx.drawImage(frame,0,0,off.width,off.height);
   const data=octx.getImageData(0,0,off.width,off.height);
-  const radius=610, cx=800, cy=800;
   for(let y=0;y<off.height;y++) for(let x=0;x<off.width;x++){
-    const i=(y*off.width+x)*4, dx=x-cx,dy=y-cy;
-    if(dx*dx+dy*dy<radius*radius && data.data[i]>238 && data.data[i+1]>238 && data.data[i+2]>238) data.data[i+3]=0;
+    const i=(y*off.width+x)*4, dx=x-spec.cx,dy=y-spec.cy;
+    if(dx*dx+dy*dy<spec.radius*spec.radius && data.data[i]>238 && data.data[i+1]>238 && data.data[i+2]>238) data.data[i+3]=0;
   }
-  octx.putImageData(data,0,0); frameOverlay=off; draw();
+  octx.putImageData(data,0,0); frameOverlay=off;
+  if(photo){scale=1;angle=0;offsetX=0;offsetY=0;zoom.value=1;rotate.value=0}
+  draw();
 }
 frame.onload=processFrame;
 document.querySelectorAll('input[name="frame"]').forEach(choice=>choice.addEventListener('change',()=>{
   document.querySelectorAll('.frame-option').forEach(card=>card.classList.remove('selected'));
   choice.closest('.frame-option').classList.add('selected');
-  frameOverlay=null; frame.src=choice.value;
+  frameOverlay=null; frame.setAttribute('data-file',choice.value); frame.src=choice.value;
 }));
 input.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);photo=new Image();photo.onload=()=>{URL.revokeObjectURL(url);enable(true);hint.hidden=true;resetPhoto()};photo.src=url});
 zoom.addEventListener('input',()=>{scale=+zoom.value;draw()});rotate.addEventListener('input',()=>{angle=+rotate.value;draw()});reset.addEventListener('click',resetPhoto);
